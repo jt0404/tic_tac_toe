@@ -1,4 +1,5 @@
 import pygame as pg
+import random
 
 # intialize pygame
 pg.init()
@@ -38,19 +39,19 @@ def get_indices():
 def detect_win(board):
     # rows
     for row in board:
-        if len(set(row)) == 1:
+        if len(set(row)) == 1 and row[0] is not None:
             return row[0]
     # coulmns
     for i in range(3):
         col = [board[0][i], board[1][i], board[2][i]]
-        if len(set(col)) == 1:
+        if len(set(col)) == 1 and col[0] is not None:
             return col[0]
     # diagonals
     diag1 = [board[0][0], board[1][1], board[2][2]]
-    if len(set(diag1)) == 1:
+    if len(set(diag1)) == 1 and diag1[0] is not None:
         return diag1[0]
     diag2 = [board[0][2], board[1][1], board[2][0]]
-    if len(set(diag2)) == 1:
+    if len(set(diag2)) == 1 and diag2[0] is not None:
         return diag2[0]
 
 
@@ -72,14 +73,6 @@ def full_board(board):
             if val is None:
                 return False
     return True
-
-
-def draw_score(scores):
-    i = 0
-    for k, v in scores.items():
-        text = score_font.render(f'{k}: {v}', True, WHITE)
-        screen.blit(text, [25 + i*100, 25])
-        i += 1
 
 
 def draw_board():
@@ -122,7 +115,9 @@ def draw(board, start_screen, score):
     if start_screen:
         draw_start_screen()
     else:
-        draw_score(score)
+        # score
+        text = score_font.render(f'X: {score["X"]}   O: {score["O"]}', True, WHITE)
+        screen.blit(text, [25, 25])
         draw_board()
         draw_players(board)
 
@@ -152,9 +147,6 @@ if __name__ == '__main__':
                         ai = True
                     continue
 
-                if ai:
-                    continue
-
                 c, r = get_indices()
                 if c in range(3) and r in range(3):
                     if board[r][c] is None:
@@ -166,8 +158,21 @@ if __name__ == '__main__':
                             board = [[None for _ in range(3)] for _ in range(3)]
                             turn = 'X'
                             continue
-
                         turn = 'O' if turn == 'X' else 'X'
+
+        if ai and turn == 'O':
+            r = random.randint(0, 2)
+            c = random.randint(0, 2)
+            while board[r][c] is not None:
+                r = random.randint(0, 2)
+                c = random.randint(0, 2)
+            board[r][c] = 'O'
+            win = detect_win(board)
+            if win is not None or full_board(board):
+                if win is not None:
+                    score[win] += 1
+                board = [[None for _ in range(3)] for _ in range(3)]
+            turn = 'X'
 
         clock.tick(FPS)
         pg.time.delay(DELAY)
