@@ -3,7 +3,7 @@
 <p> This game supports 1 player mode (vs ai) and 2 players mode </p>
 <p align="center"> <img src="tic_tac_toe1.png"> </p>
 <p align="center"> <img src="tic_tac_toe2.png"> </p>
-<h2> Play </h2>
+<h2> Install </h2>
 <ol>
   <li> Make sure you have pip and python installed </li>
   <li> Clone this repo </li>
